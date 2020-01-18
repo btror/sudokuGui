@@ -104,7 +104,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameOver = false;
-                strikeArea.clear();
+                for (int i = 0; i < 3; i++) {
+                    strikeArea.get(i).setText("");
+                }
                 easyPuzzle();
                 
             }
