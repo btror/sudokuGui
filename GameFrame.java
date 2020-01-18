@@ -2,6 +2,7 @@ package interactivesudokugame;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,9 +11,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 /**
  * GUI Window to display the game of Sudoku
@@ -26,13 +29,24 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
     private JFrame frame;
 
     private static String difficulty = "medium";
+    private static boolean gameOver = false;
+
     private static JButton[][] grid = new JButton[9][9];
-    private static ArrayList<JButton> buttons = new ArrayList<>();
-    //private static JButton[] options = new JButton[9];
     private static JButton[] options = new JButton[9];
-    private static Color color = Color.white;
+
+    private static Color gridColor = Color.WHITE;
+    private static Color backgroundColor = Color.WHITE;
+    private static Color highlightColor = Color.LIGHT_GRAY;
+    private static Color borderColor = Color.BLACK;
+
+    private static ArrayList<JLabel> strikeArea = new ArrayList<>();
+    private static int strikeAmount = 0;
+
+    private static Font font = new Font("Arial", Font.BOLD, 12);
+
+    private static ArrayList<JPanel> backgroundPanels = new ArrayList<>();
+
     private static JLabel strikes;
-    private static JPanel strikePanel;
     private static int[][] solved = new int[9][9];
     private static ArrayList<JButton> clickedButtons = new ArrayList<>();
     private static String misses = "";
@@ -50,12 +64,287 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         this.setResizable(true);
         this.getContentPane().setBackground(Color.black);
         this.setLocationRelativeTo(null);
-        
+
+        setMenu();
+
         createGrid();
-        mediumPuzzle();
-        
+        easyPuzzle();
+
         this.setVisible(true);
 
+    }
+
+    public void setMenu() {
+        JMenuBar menu = new JMenuBar();
+        JMenu gameMenu = new JMenu("New Game");
+
+        JMenuItem[] lvlList = new JMenuItem[4];
+        String lvl = "";
+        for (int i = 0; i < 4; i++) {
+            switch (i) {
+                case 0:
+                    lvl = "Easy";
+                    break;
+                case 1:
+                    lvl = "Medium";
+                    break;
+                case 2:
+                    lvl = "Hard";
+                    break;
+                case 3:
+                    lvl = "Very Hard";
+                    break;
+            }
+            JMenuItem level = new JMenuItem(lvl);
+            lvlList[i] = level;
+            gameMenu.add(level);
+        }
+
+        lvlList[0].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameOver = false;
+                strikeArea.clear();
+                easyPuzzle();
+                
+            }
+        });
+        lvlList[1].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameOver = false;
+                for (int i = 0; i < 3; i++) {
+                    strikeArea.get(i).setText("");
+                }
+                mediumPuzzle();
+                
+            }
+        });
+        lvlList[2].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameOver = false;
+                for (int i = 0; i < 3; i++) {
+                    strikeArea.get(i).setText("");
+                }
+                hardPuzzle();
+                
+            }
+        });
+        lvlList[3].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameOver = false;
+                for (int i = 0; i < 3; i++) {
+                    strikeArea.get(i).setText("");
+                }
+                veryHardPuzzle();
+                
+            }
+        });
+
+        //--------------------------------------------------------------------
+        JMenu appearanceMenu = new JMenu("Appearance");
+
+        JMenu gridMenu = new JMenu("Grid Color");
+        JMenuItem white = new JMenuItem("White");
+        JMenuItem black = new JMenuItem("Black");
+        JMenuItem green = new JMenuItem("Green");
+        JMenuItem blue = new JMenuItem("Blue");
+        JMenuItem pink = new JMenuItem("Pink");
+
+        white.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gridColor = Color.WHITE;
+                borderColor = Color.BLACK;
+                setGridColor(gridColor);
+            }
+        });
+        black.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gridColor = Color.BLACK;
+
+                borderColor = Color.WHITE;
+                setGridColor(gridColor);
+
+            }
+        });
+        green.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gridColor = Color.GREEN;
+                borderColor = Color.BLACK;
+                setGridColor(gridColor);
+            }
+        });
+        blue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gridColor = Color.BLUE;
+                borderColor = Color.BLACK;
+                setGridColor(gridColor);
+            }
+        });
+        pink.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gridColor = Color.PINK;
+                borderColor = Color.BLACK;
+                setGridColor(gridColor);
+            }
+        });
+
+        gridMenu.add(white);
+        gridMenu.add(black);
+        gridMenu.add(green);
+        gridMenu.add(blue);
+        gridMenu.add(pink);
+
+        //------------------------------------------------------- GET THE PANELS-------------------------------------------------------------------------
+        JMenu backgroundMenu = new JMenu("Background Color");
+        JMenuItem white1 = new JMenuItem("White");
+        JMenuItem black1 = new JMenuItem("Black");
+        JMenuItem green1 = new JMenuItem("Green");
+        JMenuItem blue1 = new JMenuItem("Blue");
+        JMenuItem pink1 = new JMenuItem("Pink");
+
+        white1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setBackgroundColor(Color.WHITE);
+            }
+        });
+        black1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setBackgroundColor(Color.BLACK);
+            }
+        });
+        green1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setBackgroundColor(Color.GREEN);
+            }
+        });
+        blue1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setBackgroundColor(Color.BLUE);
+            }
+        });
+        pink1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setBackgroundColor(Color.PINK);
+            }
+        });
+
+        backgroundMenu.add(white1);
+        backgroundMenu.add(black1);
+        backgroundMenu.add(green1);
+        backgroundMenu.add(blue1);
+        backgroundMenu.add(pink1);
+
+        JMenu fontMenu = new JMenu("Font Size");
+        JMenuItem small = new JMenuItem("Small");
+        JMenuItem medium = new JMenuItem("Medium");
+        JMenuItem large = new JMenuItem("Large");
+
+        small.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Font f = new Font("Arial", Font.PLAIN, 14);
+                font = f;
+                setGameFont(f);
+            }
+        });
+
+        medium.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Font f = new Font("Arial", Font.PLAIN, 26);
+                font = f;
+                setGameFont(f);
+            }
+        });
+
+        large.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Font f = new Font("Arial", Font.PLAIN, 45);
+                font = f;
+                setGameFont(f);
+            }
+        });
+
+        fontMenu.add(small);
+        fontMenu.add(medium);
+        fontMenu.add(large);
+
+        appearanceMenu.add(gridMenu);
+        appearanceMenu.add(backgroundMenu);
+        appearanceMenu.add(fontMenu);
+
+        menu.add(gameMenu);
+        menu.add(appearanceMenu);
+
+        this.setJMenuBar(menu);
+    }
+
+    public static void setGameFont(Font font) {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                grid[i][j].setFont(font);
+            }
+            options[i].setFont(font);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            strikeArea.get(i).setFont(font);
+        }
+
+    }
+
+    public static void setGridColor(Color color) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                grid[i][j].setBackground(color);
+                if (color == Color.BLACK || color == Color.BLUE) {
+                    grid[i][j].setForeground(Color.WHITE);
+                } else {
+                    grid[i][j].setForeground(Color.BLACK);
+                }
+            }
+        }
+
+        Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));//----------------------------------
+        int i1;
+        for (int i = 0; i < 9; i++) {
+            if (i == 2 || i == 5) {
+                i1 = 5;
+            } else {
+                i1 = 1;
+            }
+            for (int j = 0; j < 9; j++) {
+                if (j == 2 || j == 5) {
+                    b = BorderFactory.createMatteBorder(1, 1, i1, 5, borderColor);
+                    grid[i][j].setBorder(b);
+                } else {
+                    b = (BorderFactory.createMatteBorder(1, 1, i1, 1, borderColor));
+                    grid[i][j].setBorder(b);
+                }
+
+            }
+        }
+
+    }
+
+    public static void setBackgroundColor(Color color) {
+        for (int i = 0; i < backgroundPanels.size(); i++) {
+            backgroundPanels.get(i).setBackground(color);
+        }
     }
 
     public static String getDifficulty() {
@@ -68,7 +357,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
      * @param c the color of the grid
      */
     public static void selectedGridColor(Color c) {
-        color = c;
+        gridColor = c;
     }
 
     /**
@@ -221,9 +510,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         for (int i = 0; i < list.length; i++) {
             for (int j = 0; j < list.length; j++) {
                 if (j == x || i == y) {
-                    list[i][j].setBackground(Color.cyan);
+                    list[i][j].setBackground(highlightColor);
                 } else {
-                    list[i][j].setBackground(color);
+                    list[i][j].setBackground(gridColor);
                 }
 
             }
@@ -258,9 +547,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         for (int i = 0; i < list.length; i++) {
             for (int j = 0; j < list.length; j++) {
                 if (list[i][j].getText().equals(string)) {
-                    list[i][j].setBackground(Color.cyan);
+                    list[i][j].setBackground(highlightColor);
                 } else {
-                    list[i][j].setBackground(color);
+                    list[i][j].setBackground(gridColor);
                 }
             }
         }
@@ -286,26 +575,28 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
                 grid[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JButton button = (JButton) e.getSource();
+                        if (gameOver == false) {
+                            JButton button = (JButton) e.getSource();
 
-                        if (button.getText().equals("")) {
-                            clickedButtons.add(button);
-                        }
-                        if (clickedButtons.size() > 1 && button.getText().equals("")) {
-                            button.setBackground(Color.CYAN);
+                            if (button.getText().equals("")) {
+                                clickedButtons.add(button);
+                            }
+                            if (clickedButtons.size() > 1 && button.getText().equals("")) {
+                                button.setBackground(highlightColor);
 
-                            clickedButtons.get(clickedButtons.size() - 2).setBackground(color);
+                                clickedButtons.get(clickedButtons.size() - 2).setBackground(gridColor);
 
-                            horAndVertSquares(grid, button);
+                                horAndVertSquares(grid, button);
 
-                        } else if (clickedButtons.size() <= 1 && button.getText().equals("")) {
-                            button.setBackground(Color.CYAN);
+                            } else if (clickedButtons.size() <= 1 && button.getText().equals("")) {
+                                button.setBackground(highlightColor);
 
-                            horAndVertSquares(grid, button);
-                        }
+                                horAndVertSquares(grid, button);
+                            }
 
-                        if (!button.getText().equals("")) {
-                            numLocater(grid, button);
+                            if (!button.getText().equals("")) {
+                                numLocater(grid, button);
+                            }
                         }
                     }
 
@@ -316,7 +607,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             }
 
         }
-        Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+
+        //BORDER SETTINGS -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
         int i1;
         for (int i = 0; i < 9; i++) {
             if (i == 2 || i == 5) {
@@ -326,84 +619,116 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             }
             for (int j = 0; j < 9; j++) {
                 if (j == 2 || j == 5) {
-                    b = BorderFactory.createMatteBorder(1, 1, i1, 5, Color.BLACK);
+                    b = BorderFactory.createMatteBorder(1, 1, i1, 5, borderColor);
                     grid[i][j].setBorder(b);
                 } else {
-                    b = (BorderFactory.createMatteBorder(1, 1, i1, 1, Color.BLACK));
+                    b = (BorderFactory.createMatteBorder(1, 1, i1, 1, borderColor));
                     grid[i][j].setBorder(b);
                 }
 
             }
         }
-
+        int index = 0;
         int x = 0;
         for (int i = 0; i < 27; i++) {
             if (i < 18) {
                 JPanel p = new JPanel();
+
                 if (i == 12 || i == 13 || i == 14) {
-                    p.setBackground(Color.WHITE);
+                    p.setBackground(backgroundColor);
                     switch (i) {
                         case 12:
-                            p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, Color.BLACK));
+                            p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                            JLabel label = new JLabel();
+                            p.add(label);
+                            strikeArea.add(label);
                             break;
                         case 13:
-                            strikes = new JLabel();
-                            p.add(strikes);
-                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, Color.BLACK));
+                            //strikes = new JLabel();
+                            JLabel la = new JLabel();
+                            strikeArea.add(la);
+                            p.add(la);
+                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
                             break;
                         case 14:
-                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, Color.BLACK));
+                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                            JLabel l = new JLabel();
+                            strikeArea.add(l);
+                            p.add(l);
                             break;
                         default:
                             break;
                     }
 
+                    index++;
                 } else {
-                    p.setBackground(Color.RED);
+                    p.setBackground(backgroundColor);
+                    backgroundPanels.add(p);
                 }
                 p2.add(p);
             } else {
                 JButton button = new JButton();
-                button.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+                button.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
                 int spot = x + 1;
                 button.setText("" + spot);
-                button.setBackground(Color.white);
+                button.setBackground(gridColor);
                 p2.add(button);
                 options[x] = button;
-                
+
                 options[x].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        JButton button = (JButton) e.getSource();
+                        if (gameOver == false) {
+                            JButton button = (JButton) e.getSource();
 
-                        //set pink button to the number selected
-                        if (clickedButtons.size() > 0) {
-                            clickedButtons.get(clickedButtons.size() - 1).setText(button.getText());
-                        }
+                            //set pink button to the number selected
+                            if (clickedButtons.size() > 0) {
+                                clickedButtons.get(clickedButtons.size() - 1).setText(button.getText());
+                            }
 
-                        int x = -1;
-                        int y = -1;
-                        //see if the number is in the correct spot
-                        for (int i = 0; i < grid.length; i++) {
-                            for (int j = 0; j < grid.length; j++) {
-                                String string = grid[i][j].getText();
-                                int value = -1;
-                                if (string.equals("")) {
-                                    value = 0;
-                                } else {
-                                    value = Integer.parseInt(string);
-                                }
-                                if (value != solved[i][j] && value != 0) {//it is in wrong spot
-                                    clickedButtons.get(clickedButtons.size() - 1).setBackground(Color.PINK);
-                                    clickedButtons.get(clickedButtons.size() - 1).setText("");
-                                    misses += " X ";
-                                    strikes.setText(misses);
-                                    if (misses.equals(" X  X  X ")) {
-                                        grid = losingGrid(grid);
-                                        strikes.setText("<HTML><CENTER>YOU LOSE</CENTER></HTML>");
+                            int x = -1;
+                            int y = -1;
+                            //see if the number is in the correct spot
+                            for (int i = 0; i < grid.length; i++) {
+                                for (int j = 0; j < grid.length; j++) {
+                                    String string = grid[i][j].getText();
+                                    int value = -1;
+                                    if (string.equals("")) {
+                                        value = 0;
+                                    } else {
+                                        value = Integer.parseInt(string);
+                                    }
+                                    if (value != solved[i][j] && value != 0) {//it is in wrong spot
+                                        clickedButtons.get(clickedButtons.size() - 1).setBackground(Color.PINK);
+                                        clickedButtons.get(clickedButtons.size() - 1).setText("");
+                                        strikeArea.get(strikeAmount).setText("X");
+                                        strikeAmount++;
+                                        //strikes.setText(misses);
+                                        if (strikeAmount > 2) {
+                                            grid = losingGrid(grid);
+                                            gameOver = true;
+                                            strikeArea.get(0).setText("R");
+                                            strikeArea.get(1).setText("I");
+                                            strikeArea.get(2).setText("P");
+                                            strikeAmount = 0;
+
+                                            System.out.println(strikeArea.size());
+                                        }
                                     }
                                 }
                             }
+
+                            //check if the user won
+                            boolean win = checkWin(grid);
+                            if (win == true) {
+                                grid = winningGrid(grid);
+                                strikeArea.get(0).setText("WI");
+                                strikeArea.get(1).setText("NN");
+                                strikeArea.get(2).setText("ER");
+                                strikeAmount = 0;
+                                gameOver = true;
+                            }
+
                         }
                     }
 
@@ -415,88 +740,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
 
         p1.add(p2);
 
-//        GridLayout bottomGrid = new GridLayout(4, 3);
-//        int index = 0;
-//
-//        //bottom left
-//        JPanel bottom1 = new JPanel(bottomGrid);
-//
-//        for (int i = 0; i < 12; i++) {
-//            if (i < 9) {
-//                bottom1.add(new JLabel());
-//            } else {
-//                JButton button = new JButton();
-//                bottom1.add(button);
-//                options.add(button);
-//                index++;
-//            }
-//
-//        }
-//
-//        p1.add(bottom1);
-//
-//        //bottom middle
-//        JPanel bottom2 = new JPanel(bottomGrid);
-//
-//        for (int i = 0; i < 12; i++) {
-//            if (i < 9) {
-//                JPanel strike = new JPanel();
-//                if (i == 3 || i == 4 || i == 5) {
-//                    strike.setBackground(Color.red);
-//                    switch (i) {
-//                        case 3: //top, left, bottom
-//                            strike.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 0, Color.BLACK));
-//                            break;
-//                        case 4: //top, bottom
-//                            strike.setBorder(BorderFactory.createMatteBorder(3, 0, 3, 0, Color.BLACK));
-//                            break;
-//                        case 5: //top, right, bottom
-//                            strike.setBorder(BorderFactory.createMatteBorder(3, 0, 3, 3, Color.BLACK));
-//                            break;
-//                    }
-//
-//                }
-//                bottom2.add(strike);
-//            } else {
-//                JButton button = new JButton();
-//                bottom2.add(button);
-//                options.add(button);
-//                index++;
-//            }
-//
-//        }
-//
-//        p1.add(bottom2);
-//
-//        //bottom right
-//        JPanel bottom3 = new JPanel(bottomGrid);
-//
-//        for (int i = 0; i < 12; i++) {
-//            if (i < 9) {
-//                bottom3.add(new JLabel());
-//            } else {
-//                JButton button = new JButton();
-//                bottom3.add(button);
-//                options.add(button);
-//                index++;
-//            }
-//
-//        }
-//
-//        for (int i = 0; i < 9; i++) {
-//            int hold = i + 1;
-//            String num = Integer.toString(hold);
-//            options.get(i).setText(num);
-//        }
-//
-//        p1.add(bottom3);
         this.add(p1);
-//
-//        for (int i = 0; i < grid.length; i++) {
-//            for (int j = 0; j < grid.length; j++) {
-//                // action listener for the options buttons
-//            }
-//        }
 
     }
 
@@ -632,7 +876,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             for (int k = 0; k < grid.length; k++) {
                 String string = Integer.toString(board[i][k]);
                 grid[i][k].setLabel(string);
-                grid[i][k].setBackground(color); //try this
+                grid[i][k].setBackground(gridColor); //try this
                 String s = grid[i][k].getText();
                 int value = -1;
                 if (s.equals("")) {
@@ -643,6 +887,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
                 solved[i][k] = value;
             }
         }
+        
+        
+        
         return grid;
     }
 
@@ -747,51 +994,10 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
-        gameMenuBar = new javax.swing.JMenuBar();
-        gameOptions = new javax.swing.JMenu();
-        generateNewPuzzleItem = new javax.swing.JMenuItem();
-        changeDifficultyItem = new javax.swing.JMenuItem();
-        settingsMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        gameOptions.setText("Game");
-
-        generateNewPuzzleItem.setText("Generate New Puzzle");
-        generateNewPuzzleItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                generateNewPuzzleItemActionPerformed(evt);
-            }
-        });
-        gameOptions.add(generateNewPuzzleItem);
-
-        changeDifficultyItem.setText("Change Difficulty");
-        changeDifficultyItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeDifficultyItemActionPerformed(evt);
-            }
-        });
-        gameOptions.add(changeDifficultyItem);
-
-        gameMenuBar.add(gameOptions);
-
-        settingsMenu.setText("Settings");
-
-        jMenuItem1.setText("Personalize");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        settingsMenu.add(jMenuItem1);
-
-        gameMenuBar.add(settingsMenu);
-
-        setJMenuBar(gameMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -801,44 +1007,11 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 482, Short.MAX_VALUE)
+            .addGap(0, 503, Short.MAX_VALUE)
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    //change the theme of the game
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        ThemePickerWindow themePicker = new ThemePickerWindow(this);
-        themePicker.setVisible(true);
-
-
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    //change the difficulty of the puzzle
-    private void changeDifficultyItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeDifficultyItemActionPerformed
-        DifficultyPickerWindow difficultyPicker = new DifficultyPickerWindow(this);
-        difficultyPicker.setVisible(true);
-    }//GEN-LAST:event_changeDifficultyItemActionPerformed
-
-
-    private void generateNewPuzzleItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateNewPuzzleItemActionPerformed
-
-        switch (difficulty) {
-            case "easy":
-                easyPuzzle();
-                break;
-            case "medium":
-                mediumPuzzle();
-                break;
-            case "hard":
-                hardPuzzle();
-                break;
-            case "very hard":
-                veryHardPuzzle();
-                break;
-        }
-    }//GEN-LAST:event_generateNewPuzzleItemActionPerformed
+    }// </editor-fold>                        
 
     /**
      * @param args the command line arguments
@@ -875,15 +1048,8 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem changeDifficultyItem;
-    private javax.swing.JMenuBar gameMenuBar;
-    private javax.swing.JMenu gameOptions;
-    private javax.swing.JMenuItem generateNewPuzzleItem;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenu settingsMenu;
-    // End of variables declaration//GEN-END:variables
-
+    // Variables declaration - do not modify                     
+    // End of variables declaration                   
     @Override
     public void actionPerformed(ActionEvent e) {
 
