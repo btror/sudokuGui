@@ -42,7 +42,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
     private static Color borderColor = Color.BLACK;
 
     private static int strikeAmount = 0;
-    private static int amountOfAttempts = 7;
+    private static int amountOfAttempts = 3;
 
     /**
      * default constructor
@@ -50,9 +50,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
     public GameFrame() {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(400, 500)); //575 775
+        this.setSize(new Dimension(400, 500));
         this.setMinimumSize(new Dimension(100, 150));
-        this.setTitle("Sudoku    Width: " + this.getWidth() + "    Height: " + this.getHeight());
+        this.setTitle("Sudoku");
         this.setResizable(true);
         this.getContentPane().setBackground(Color.black);
         this.setLocationRelativeTo(null);
@@ -66,6 +66,9 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
 
     }
 
+    /**
+     * Sets up the Game Menu and other settings
+     */
     public void setMenu() {
         JMenuBar menu = new JMenuBar();
         JMenu gameMenu = new JMenu("New Game");
@@ -347,74 +350,28 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         appearanceMenu.add(backgroundMenu);
         appearanceMenu.add(fontMenu);
 
-        JMenu settingsMenu = new JMenu("Settings");
-        JMenu changeStrikes = new JMenu("Change Amount of Attempts");
-        JMenuItem three = new JMenuItem("3 Attempts");
-        JMenuItem five = new JMenuItem("5 Attempts");
-        JMenuItem seven = new JMenuItem("7 Attempts");
-        JMenuItem nine = new JMenuItem("9 Attempts");
-        JMenuItem unlimited = new JMenuItem("Unlimited");
-
-        three.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeAmountOfAttempts(3);
-            }
-        });
-
-        five.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeAmountOfAttempts(5);
-            }
-        });
-
-        seven.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeAmountOfAttempts(7);
-            }
-        });
-
-        nine.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeAmountOfAttempts(9);
-            }
-        });
-
-        unlimited.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeAmountOfAttempts(-1);
-            }
-        });
-
-        changeStrikes.add(three);
-        changeStrikes.add(five);
-        changeStrikes.add(seven);
-        changeStrikes.add(nine);
-        changeStrikes.add(unlimited);
-        settingsMenu.add(changeStrikes);
-
         menu.add(gameMenu);
         menu.add(appearanceMenu);
-        menu.add(settingsMenu);
 
         this.setJMenuBar(menu);
     }
 
-    public static void changeAmountOfAttempts(int amount) {
-
-        amountOfAttempts = amount;
-    }
-
+    /**
+     * Setter: sets the highlighter's color
+     *
+     * @param color the highlighter color
+     */
     public static void setHighlightColor(Color color) {
         if (!clickedButtons.isEmpty()) {
             horAndVertSquares(grid, clickedButtons.get(clickedButtons.size() - 1));
         }
     }
 
+    /**
+     * Setter: sets the font of the numbers in the game
+     *
+     * @param font the font of the numbers
+     */
     public static void setGameFont(Font font) {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid.length; j++) {
@@ -429,6 +386,11 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
 
     }
 
+    /**
+     * Setter: sets the grid's color
+     *
+     * @param color the color of the grid
+     */
     public static void setGridColor(Color color) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -463,6 +425,11 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
 
     }
 
+    /**
+     * Setter: sets the background color of the game (not the grid)
+     *
+     * @param color the background color of the game
+     */
     public static void setBackgroundColor(Color color) {
         for (int i = 0; i < backgroundPanels.size(); i++) {
             backgroundPanels.get(i).setBackground(color);
@@ -1058,8 +1025,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
                                                     break;
                                             }
                                             strikeAmount = 0;
-
-                                            System.out.println(strikeArea.size());
                                         }
                                     }
                                 }
@@ -1175,8 +1140,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
      * @return JButton[][] grid a copy of the integer board
      */
     public static JButton[][] generateBoard() {
-        //strikes.setText("");
-        //fill a board with 0's
         int[][] board = new int[9][9];
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
@@ -1400,4 +1363,3 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
     }
 
 }
-
