@@ -26,37 +26,29 @@ import javax.swing.border.Border;
  */
 public final class GameFrame extends javax.swing.JFrame implements ActionListener {
 
-    private JFrame frame;
-
-    private static String difficulty = "medium";
     private static boolean gameOver = false;
 
     private static JButton[][] grid = new JButton[9][9];
     private static JButton[] options = new JButton[9];
+    private static int[][] solved = new int[9][9];
+
+    private static ArrayList<JLabel> strikeArea = new ArrayList<>();
+    private static ArrayList<JPanel> backgroundPanels = new ArrayList<>();
+    private static ArrayList<JButton> clickedButtons = new ArrayList<>();
 
     private static Color gridColor = Color.WHITE;
     private static Color backgroundColor = Color.WHITE;
     private static Color highlightColor = Color.LIGHT_GRAY;
     private static Color borderColor = Color.BLACK;
 
-    private static ArrayList<JLabel> strikeArea = new ArrayList<>();
     private static int strikeAmount = 0;
-
-    private static Font font = new Font("Arial", Font.BOLD, 12);
-
-    private static ArrayList<JPanel> backgroundPanels = new ArrayList<>();
-
-    private static JLabel strikes;
-    private static int[][] solved = new int[9][9];
-    private static ArrayList<JButton> clickedButtons = new ArrayList<>();
-    private static String misses = "";
+    private static int amountOfAttempts = 7;
 
     /**
      * default constructor
      */
     public GameFrame() {
 
-        frame = new JFrame();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(new Dimension(400, 500)); //575 775
         this.setMinimumSize(new Dimension(100, 150));
@@ -104,48 +96,51 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameOver = false;
-                for (int i = 0; i < 3; i++) {
+                strikeAmount = 0;
+                for (int i = 0; i < amountOfAttempts; i++) {
                     strikeArea.get(i).setText("");
                 }
                 easyPuzzle();
-                
+
             }
         });
         lvlList[1].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameOver = false;
-                for (int i = 0; i < 3; i++) {
+                strikeAmount = 0;
+                for (int i = 0; i < amountOfAttempts; i++) {
                     strikeArea.get(i).setText("");
                 }
                 mediumPuzzle();
-                
+
             }
         });
         lvlList[2].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameOver = false;
-                for (int i = 0; i < 3; i++) {
+                strikeAmount = 0;
+                for (int i = 0; i < amountOfAttempts; i++) {
                     strikeArea.get(i).setText("");
                 }
                 hardPuzzle();
-                
+
             }
         });
         lvlList[3].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameOver = false;
-                for (int i = 0; i < 3; i++) {
+                strikeAmount = 0;
+                for (int i = 0; i < amountOfAttempts; i++) {
                     strikeArea.get(i).setText("");
                 }
                 veryHardPuzzle();
-                
+
             }
         });
 
-        //--------------------------------------------------------------------
         JMenu appearanceMenu = new JMenu("Appearance");
 
         JMenu gridMenu = new JMenu("Grid Color");
@@ -204,7 +199,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         gridMenu.add(blue);
         gridMenu.add(pink);
 
-        //------------------------------------------------------- GET THE PANELS-------------------------------------------------------------------------
         JMenu backgroundMenu = new JMenu("Background Color");
         JMenuItem white1 = new JMenuItem("White");
         JMenuItem black1 = new JMenuItem("Black");
@@ -258,7 +252,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font f = new Font("Arial", Font.PLAIN, 14);
-                font = f;
+
                 setGameFont(f);
             }
         });
@@ -267,7 +261,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font f = new Font("Arial", Font.PLAIN, 26);
-                font = f;
+
                 setGameFont(f);
             }
         });
@@ -276,7 +270,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font f = new Font("Arial", Font.PLAIN, 45);
-                font = f;
+
                 setGameFont(f);
             }
         });
@@ -285,14 +279,140 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         fontMenu.add(medium);
         fontMenu.add(large);
 
+        JMenu highlightMenu = new JMenu("Highlight Color");
+        JMenuItem yellow2 = new JMenuItem("Yellow");
+        JMenuItem orange2 = new JMenuItem("Orange");
+        JMenuItem cyan2 = new JMenuItem("Cyan");
+        JMenuItem magenta2 = new JMenuItem("Magenta");
+        JMenuItem pink2 = new JMenuItem("Pink");
+        JMenuItem lightGray2 = new JMenuItem("Gray");
+
+        yellow2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.YELLOW;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        orange2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.ORANGE;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        cyan2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.CYAN;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        magenta2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.magenta;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        pink2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.PINK;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        lightGray2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                highlightColor = Color.LIGHT_GRAY;
+                setHighlightColor(highlightColor);
+            }
+        });
+
+        highlightMenu.add(lightGray2);
+        highlightMenu.add(yellow2);
+        highlightMenu.add(orange2);
+        highlightMenu.add(cyan2);
+        highlightMenu.add(magenta2);
+        highlightMenu.add(pink2);
+
+        appearanceMenu.add(highlightMenu);
         appearanceMenu.add(gridMenu);
         appearanceMenu.add(backgroundMenu);
         appearanceMenu.add(fontMenu);
 
+        JMenu settingsMenu = new JMenu("Settings");
+        JMenu changeStrikes = new JMenu("Change Amount of Attempts");
+        JMenuItem three = new JMenuItem("3 Attempts");
+        JMenuItem five = new JMenuItem("5 Attempts");
+        JMenuItem seven = new JMenuItem("7 Attempts");
+        JMenuItem nine = new JMenuItem("9 Attempts");
+        JMenuItem unlimited = new JMenuItem("Unlimited");
+
+        three.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeAmountOfAttempts(3);
+            }
+        });
+
+        five.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeAmountOfAttempts(5);
+            }
+        });
+
+        seven.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeAmountOfAttempts(7);
+            }
+        });
+
+        nine.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeAmountOfAttempts(9);
+            }
+        });
+
+        unlimited.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeAmountOfAttempts(-1);
+            }
+        });
+
+        changeStrikes.add(three);
+        changeStrikes.add(five);
+        changeStrikes.add(seven);
+        changeStrikes.add(nine);
+        changeStrikes.add(unlimited);
+        settingsMenu.add(changeStrikes);
+
         menu.add(gameMenu);
         menu.add(appearanceMenu);
+        menu.add(settingsMenu);
 
         this.setJMenuBar(menu);
+    }
+
+    public static void changeAmountOfAttempts(int amount) {
+
+        amountOfAttempts = amount;
+    }
+
+    public static void setHighlightColor(Color color) {
+        if (!clickedButtons.isEmpty()) {
+            horAndVertSquares(grid, clickedButtons.get(clickedButtons.size() - 1));
+        }
     }
 
     public static void setGameFont(Font font) {
@@ -303,7 +423,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             options[i].setFont(font);
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < amountOfAttempts; i++) {
             strikeArea.get(i).setFont(font);
         }
 
@@ -321,7 +441,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
             }
         }
 
-        Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));//----------------------------------
+        Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
         int i1;
         for (int i = 0; i < 9; i++) {
             if (i == 2 || i == 5) {
@@ -347,73 +467,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         for (int i = 0; i < backgroundPanels.size(); i++) {
             backgroundPanels.get(i).setBackground(color);
         }
-    }
-
-    public static String getDifficulty() {
-        return difficulty;
-    }
-
-    /**
-     * Sets the color
-     *
-     * @param c the color of the grid
-     */
-    public static void selectedGridColor(Color c) {
-        gridColor = c;
-    }
-
-    /**
-     * Getter: gets the current grid
-     *
-     * @return JButton[][] the sudoku grid
-     */
-    public static JButton[][] getGrid() {
-        return grid;
-    }
-
-    /**
-     * Getter: gets a generated easy puzzle
-     *
-     * @return JButton[][] an easy puzzle
-     */
-    public static JButton[][] getEasyPuzzle() {
-        return easyPuzzle();
-    }
-
-    /**
-     * Getter: gets a generated medium puzzle
-     *
-     * @return JButton[][] a medium puzzle
-     */
-    public static JButton[][] getMediumPuzzle() {
-        return mediumPuzzle();
-    }
-
-    /**
-     * Getter: gets a generated hard puzzle
-     *
-     * @return JButton[][] a hard puzzle
-     */
-    public static JButton[][] getHardPuzzle() {
-        return hardPuzzle();
-    }
-
-    /**
-     * Getter: gets a generated very hard puzzle
-     *
-     * @return JButton[][] a very hard puzzle
-     */
-    public static JButton[][] getVeryHardPuzzle() {
-        return veryHardPuzzle();
-    }
-
-    /**
-     * Setter: sets the difficulty of the game
-     *
-     * @param difficult a string representing the difficulty the game will be
-     */
-    public static void setDifficulty(String difficult) {
-        difficulty = difficult;
     }
 
     /**
@@ -610,7 +663,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
 
         }
 
-        //BORDER SETTINGS -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         Border b = (BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
         int i1;
         for (int i = 0; i < 9; i++) {
@@ -635,38 +687,289 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         for (int i = 0; i < 27; i++) {
             if (i < 18) {
                 JPanel p = new JPanel();
-
-                if (i == 12 || i == 13 || i == 14) {
-                    p.setBackground(backgroundColor);
-                    switch (i) {
-                        case 12:
-                            p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
-                            JLabel label = new JLabel();
-                            p.add(label);
-                            strikeArea.add(label);
-                            break;
-                        case 13:
-                            //strikes = new JLabel();
-                            JLabel la = new JLabel();
-                            strikeArea.add(la);
-                            p.add(la);
-                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
-                            break;
-                        case 14:
-                            p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
-                            JLabel l = new JLabel();
-                            strikeArea.add(l);
-                            p.add(l);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    index++;
-                } else {
-                    p.setBackground(backgroundColor);
-                    backgroundPanels.add(p);
+                //amountOfAttempts
+                //i == 12 || i == 13 || i == 14
+                switch (amountOfAttempts) {
+                    case 3:
+                        if (i == 12 || i == 13 || i == 14) {
+                            p.setBackground(backgroundColor);
+                            switch (i) {
+                                case 12:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                                    JLabel label = new JLabel();
+                                    p.add(label);
+                                    strikeArea.add(label);
+                                    break;
+                                case 13:
+                                    //strikes = new JLabel();
+                                    JLabel la = new JLabel();
+                                    strikeArea.add(la);
+                                    p.add(la);
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    break;
+                                case 14:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                                    JLabel l = new JLabel();
+                                    strikeArea.add(l);
+                                    p.add(l);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            index++;
+                        } else {
+                            p.setBackground(backgroundColor);
+                            backgroundPanels.add(p);
+                        }   break;
+                //here
+                    case 5:
+                        if (i == 11 || i == 12 || i == 13 || i == 14 || i == 15) {
+                            p.setBackground(backgroundColor);
+                            switch (i) {
+                                case 11:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                                    JLabel label1 = new JLabel();
+                                    p.add(label1);
+                                    strikeArea.add(label1);
+                                    break;
+                                case 12:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label = new JLabel();
+                                    p.add(label);
+                                    strikeArea.add(label);
+                                    break;
+                                case 13:
+                                    //strikes = new JLabel();
+                                    JLabel la = new JLabel();
+                                    strikeArea.add(la);
+                                    p.add(la);
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    break;
+                                case 14:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l = new JLabel();
+                                    strikeArea.add(l);
+                                    p.add(l);
+                                    break;
+                                case 15:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                                    JLabel l1 = new JLabel();
+                                    strikeArea.add(l1);
+                                    p.add(l1);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            index++;
+                        } else {
+                            p.setBackground(backgroundColor);
+                            backgroundPanels.add(p);
+                        }   break;
+                    case 7:
+                        if (i == 10 || i == 11 || i == 12 || i == 13 || i == 14 || i == 15 || i == 16) {
+                            p.setBackground(backgroundColor);
+                            switch (i) {
+                                case 10:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                                    JLabel label2 = new JLabel();
+                                    p.add(label2);
+                                    strikeArea.add(label2);
+                                    break;
+                                case 11:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label1 = new JLabel();
+                                    p.add(label1);
+                                    strikeArea.add(label1);
+                                    break;
+                                case 12:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label = new JLabel();
+                                    p.add(label);
+                                    strikeArea.add(label);
+                                    break;
+                                case 13:
+                                    //strikes = new JLabel();
+                                    JLabel la = new JLabel();
+                                    strikeArea.add(la);
+                                    p.add(la);
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    break;
+                                case 14:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l = new JLabel();
+                                    strikeArea.add(l);
+                                    p.add(l);
+                                    break;
+                                case 15:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l1 = new JLabel();
+                                    strikeArea.add(l1);
+                                    p.add(l1);
+                                    break;
+                                case 16:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                                    JLabel label4 = new JLabel();
+                                    p.add(label4);
+                                    strikeArea.add(label4);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            index++;
+                        } else {
+                            p.setBackground(backgroundColor);
+                            backgroundPanels.add(p);
+                        }   break;
+                    case 9:
+                        if (i == 9 || i == 10 || i == 11 || i == 12 || i == 13 || i == 14 || i == 15 || i == 16 || i == 17) {
+                            p.setBackground(backgroundColor);
+                            switch (i) {
+                                case 9:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                                    JLabel label3 = new JLabel();
+                                    p.add(label3);
+                                    strikeArea.add(label3);
+                                    break;
+                                case 10:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label2 = new JLabel();
+                                    p.add(label2);
+                                    strikeArea.add(label2);
+                                    break;
+                                case 11:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label1 = new JLabel();
+                                    p.add(label1);
+                                    strikeArea.add(label1);
+                                    break;
+                                case 12:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label = new JLabel();
+                                    p.add(label);
+                                    strikeArea.add(label);
+                                    break;
+                                case 13:
+                                    //strikes = new JLabel();
+                                    JLabel la = new JLabel();
+                                    strikeArea.add(la);
+                                    p.add(la);
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    break;
+                                case 14:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l = new JLabel();
+                                    strikeArea.add(l);
+                                    p.add(l);
+                                    break;
+                                case 15:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l1 = new JLabel();
+                                    strikeArea.add(l1);
+                                    p.add(l1);
+                                    break;
+                                case 16:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label4 = new JLabel();
+                                    p.add(label4);
+                                    strikeArea.add(label4);
+                                    break;
+                                case 17:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                                    JLabel label5 = new JLabel();
+                                    p.add(label5);
+                                    strikeArea.add(label5);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            index++;
+                        } else {
+                            p.setBackground(backgroundColor);
+                            backgroundPanels.add(p);
+                        }   break;
+                    default:
+                        if (i == 9 || i == 10 || i == 11 || i == 12 || i == 13 || i == 14 || i == 15 || i == 16 || i == 17) {
+                            p.setBackground(backgroundColor);
+                            switch (i) {
+                                case 9:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 2, 1, 0, borderColor));
+                                    JLabel label3 = new JLabel();
+                                    p.add(label3);
+                                    label3.setText("U");
+                                    strikeArea.add(label3);
+                                    break;
+                                case 10:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label2 = new JLabel();
+                                    p.add(label2);
+                                    label2.setText("N");
+                                    strikeArea.add(label2);
+                                    break;
+                                case 11:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label1 = new JLabel();
+                                    p.add(label1);
+                                    label1.setText("L");
+                                    strikeArea.add(label1);
+                                    break;
+                                case 12:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label = new JLabel();
+                                    p.add(label);
+                                    label.setText("I");
+                                    strikeArea.add(label);
+                                    break;
+                                case 13:
+                                    //strikes = new JLabel();
+                                    JLabel la = new JLabel();
+                                    strikeArea.add(la);
+                                    p.add(la);
+                                    la.setText("M");
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    break;
+                                case 14:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l = new JLabel();
+                                    strikeArea.add(l);
+                                    l.setText("I");
+                                    p.add(l);
+                                    break;
+                                case 15:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel l1 = new JLabel();
+                                    strikeArea.add(l1);
+                                    l1.setText("T");
+                                    p.add(l1);
+                                    break;
+                                case 16:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 0, borderColor));
+                                    JLabel label4 = new JLabel();
+                                    p.add(label4);
+                                    label4.setText("E");
+                                    strikeArea.add(label4);
+                                    break;
+                                case 17:
+                                    p.setBorder(BorderFactory.createMatteBorder(2, 0, 1, 2, borderColor));
+                                    JLabel label5 = new JLabel();
+                                    p.add(label5);
+                                    label5.setText("D");
+                                    strikeArea.add(label5);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            index++;
+                        } else {
+                            p.setBackground(backgroundColor);
+                            backgroundPanels.add(p);
+                        }   break;
                 }
+
                 p2.add(p);
             } else {
                 JButton button = new JButton();
@@ -703,15 +1006,52 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
                                     if (value != solved[i][j] && value != 0) {//it is in wrong spot
                                         clickedButtons.get(clickedButtons.size() - 1).setBackground(Color.PINK);
                                         clickedButtons.get(clickedButtons.size() - 1).setText("");
-                                        strikeArea.get(strikeAmount).setText("X");
-                                        strikeAmount++;
+                                        if (amountOfAttempts != -1) {
+                                            strikeArea.get(strikeAmount).setText("X");
+                                            strikeAmount++;
+                                        }
                                         //strikes.setText(misses);
-                                        if (strikeAmount > 2) {
+                                        if (strikeAmount == amountOfAttempts) {
                                             grid = losingGrid(grid);
                                             gameOver = true;
-                                            strikeArea.get(0).setText("R");
-                                            strikeArea.get(1).setText("I");
-                                            strikeArea.get(2).setText("P");
+                                            switch (amountOfAttempts) {
+                                                case 3:
+                                                    strikeArea.get(0).setText("R");
+                                                    strikeArea.get(1).setText("I");
+                                                    strikeArea.get(2).setText("P");
+                                                    break;
+                                                case 5:
+                                                    strikeArea.get(0).setText("L");
+                                                    strikeArea.get(1).setText("O");
+                                                    strikeArea.get(2).setText("S");
+                                                    strikeArea.get(3).setText("E");
+                                                    strikeArea.get(4).setText("R");
+                                                    break;
+                                                case 7:
+                                                    strikeArea.get(0).setText("A");
+                                                    strikeArea.get(1).setText("W");
+                                                    strikeArea.get(2).setText(" ");
+                                                    strikeArea.get(3).setText("M");
+                                                    strikeArea.get(4).setText("A");
+                                                    strikeArea.get(5).setText("N");
+                                                    strikeArea.get(6).setText("!");
+                                                    break;
+                                                case 9:
+                                                case -1:
+                                                    //you lose!
+                                                    strikeArea.get(0).setText("Y");
+                                                    strikeArea.get(1).setText("O");
+                                                    strikeArea.get(2).setText("U");
+                                                    strikeArea.get(3).setText(" ");
+                                                    strikeArea.get(4).setText("L");
+                                                    strikeArea.get(5).setText("O");
+                                                    strikeArea.get(6).setText("S");
+                                                    strikeArea.get(7).setText("E");
+                                                    strikeArea.get(8).setText("!");
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
                                             strikeAmount = 0;
 
                                             System.out.println(strikeArea.size());
@@ -830,7 +1170,6 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
      * @return JButton[][] grid a copy of the integer board
      */
     public static JButton[][] generateBoard() {
-        misses = "";
         //strikes.setText("");
         //fill a board with 0's
         int[][] board = new int[9][9];
@@ -889,9 +1228,7 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
                 solved[i][k] = value;
             }
         }
-        
-        
-        
+
         return grid;
     }
 
@@ -1004,12 +1341,12 @@ public final class GameFrame extends javax.swing.JFrame implements ActionListene
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 518, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 518, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 503, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 503, Short.MAX_VALUE)
         );
 
         pack();
