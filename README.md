@@ -25,6 +25,6 @@ A simple Java GUI Desktop App of Sudoku.
 2. Download and double-click on the executable InteractiveSudokuGame.jar file.
 
 # Author
-<a href="https://github.com/btror">Brandon Rorie</a>
+<a href="https://github.com/btror">Brandon</a>
 
 
