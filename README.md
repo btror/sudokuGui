@@ -27,4 +27,5 @@ A simple Java GUI Desktop App of Sudoku.
 # Author
 <a href="https://github.com/btror">Brandon</a>
 
-
+# About This Project
+Currently, I am a 2nd year undergrad at UNCC studying computer science and concentrating in software engineering. As of now (1/21/20), this is my biggest project. 
