@@ -24,8 +24,8 @@ A simple Java GUI Desktop App of Sudoku.
 1. Download java runtime environment (jre) version 8 <a href="https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">here</a> if you don't have it already.
 2. Download and double-click on the executable InteractiveSudokuGame.jar file.
 
+# About This Project
+Currently, I am a 2nd year undergrad at UNCC studying computer science and concentrating in software engineering. As of now (1/21/20), this is my biggest project. I put many hours in learning how to use swing and this is what I came up with. It is not the cleanest or most organized project, but it's a start. 
+
 # Author
 <a href="https://github.com/btror">Brandon</a>
-
-# About This Project
-Currently, I am a 2nd year undergrad at UNCC studying computer science and concentrating in software engineering. As of now (1/21/20), this is my biggest project. 
